@@ -6,6 +6,7 @@
 #include "Library/library.h"
 #include "Macros/macros.h"
 #include "Pages/pages.h"
+#include "CodeCompletion/cc.h"
 
 void display_lines() {
     clear();
@@ -124,6 +125,12 @@ void editor() {
         default:
             if (c >= 32 && c <= 126) {
                 insert_char(c);
+                if (checks(c)) {
+                    if (current_col > 0) {
+                        current_col--;
+                        move(current_line, current_col + 6);  // +6 for line number offset
+                    }
+                }
             }
             break;
     }
