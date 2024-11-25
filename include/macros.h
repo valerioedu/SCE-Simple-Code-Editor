@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../File/editorfile.h"
-#include "../Library/library.h"
+#include "editorfile.h"
+#include "library.h"
 
 void CTRL_C() {
     

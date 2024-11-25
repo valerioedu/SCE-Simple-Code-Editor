@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../Library/library.h"
+#include "library.h"
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -44,25 +44,21 @@ char* filesystem() {
     DIR *dir;
     struct dirent *entry;
     int selected = 0, start = 0, max_display = LINES - 4;
-
     if (getcwd(current_path, sizeof(current_path)) == NULL) {
         mvprintw(LINES-1, 0, "Error getting current directory");
         getch();
         return NULL;
     }
-
     while (1) {
         clear();
         mvprintw(0, 0, "Current directory: %s\tPress H for help", current_path);
         mvprintw(1, 0, " ");
-
         dir = opendir(current_path);
         if (dir == NULL) {
             mvprintw(LINES-1, 0, "Error opening directory");
             getch();
             return NULL;
         }
-
         int count = 0;
         while ((entry = readdir(dir)) != NULL && count < start + max_display) {
             if (count >= start) {
@@ -75,7 +71,6 @@ char* filesystem() {
             count++;
         }
         closedir(dir);
-
         int ch = getch();
         switch (ch) {
             case KEY_UP:
@@ -147,12 +142,10 @@ void load_file(const char* filepath) {
         getch();
         return;
     }
-
     memset(lines, 0, sizeof(lines));
     line_count = 0;
     current_line = 0;
     current_col = 0;
-
     char buffer[MAX_COLS];
     while (fgets(buffer, MAX_COLS, file) != NULL && line_count < MAX_LINES) {
         size_t len = strlen(buffer);
@@ -165,17 +158,16 @@ void load_file(const char* filepath) {
         lines[line_count][MAX_COLS - 1] = '\0';
         line_count++;
     }
-
+    for (int i = 0; i < line_count; i++) {
+        detect_variables(lines[i]);
+    }
     fclose(file);
-
     if (line_count == 0) {
         strcpy(lines[0], "");
         line_count = 1;
     }
-
     strncpy(file_name, filepath, sizeof(file_name) - 1);
     file_name[sizeof(file_name) - 1] = '\0';
-
     mvprintw(LINES-1, 0, "File loaded successfully: %s", filepath);
 }
 
@@ -183,12 +175,10 @@ void create_file(const char* current_path) {
     char file_name[MAX_PATH];
     char full_path[MAX_PATH];
     int i = 0;
-
     clear();
     mvprintw(0, 0, "Enter new file name (press Enter to confirm, Esc to cancel):");
     mvprintw(2, 0, "File name: ");
     refresh();
-
     while (1) {
         int c = getch();
         if (c == '\n') {
@@ -209,7 +199,6 @@ void create_file(const char* current_path) {
         }
         refresh();
     }
-
     if (strlen(file_name) > 0) {
         snprintf(full_path, MAX_PATH, "%s/%s", current_path, file_name);
         FILE *fp = fopen(full_path, "w");
@@ -222,7 +211,6 @@ void create_file(const char* current_path) {
     } else {
         mvprintw(4, 0, "Error: No file name entered.");
     }
-
     mvprintw(6, 0, "Press any key to continue...");
     refresh();
     getch();
@@ -232,12 +220,10 @@ void create_dir(const char* current_path) {
     char dir_name[MAX_PATH];
     char full_path[MAX_PATH];
     int i = 0;
-
     clear();
     mvprintw(0, 0, "Enter new directory name (press Enter to confirm, Esc to cancel):");
     mvprintw(2, 0, "Directory name: ");
     refresh();
-
     while (1) {
         int c = getch();
         if (c == '\n') {
@@ -258,7 +244,6 @@ void create_dir(const char* current_path) {
         }
         refresh();
     }
-
     if (strlen(dir_name) > 0) {
         snprintf(full_path, MAX_PATH, "%s/%s", current_path, dir_name);
         if (mkdir(full_path, 0777) == 0) {
@@ -269,7 +254,6 @@ void create_dir(const char* current_path) {
     } else {
         mvprintw(4, 0, "Error: No directory name entered.");
     }
-
     mvprintw(6, 0, "Press any key to continue...");
     refresh();
     getch();
@@ -280,7 +264,6 @@ void file_save() {
     mvprintw(0, 0, "Enter file name to save (press Enter to confirm, Esc to cancel):");
     mvprintw(2, 0, "File name: ");
     refresh();
-
     int i = 0;
     int name_start_col = 11;
     while (1) {
@@ -303,7 +286,6 @@ void file_save() {
         }
         refresh();
     }
-
     if (strlen(file_name) > 0) {
         transcribe_to_text();
         FILE *fp = fopen(file_name, "w");
@@ -318,7 +300,6 @@ void file_save() {
     } else {
         mvprintw(4, 0, "Error: No file name entered.");
     }
-
     mvprintw(6, 0, "Press any key to continue...");
     refresh();
     getch();
@@ -329,7 +310,6 @@ void save_file() {
         file_save();
         return;
     }
-
     FILE *fp = fopen(file_name, "w");
     if (fp == NULL) {
         clear();
@@ -339,16 +319,13 @@ void save_file() {
         getch();
         return;
     }
-
     for (int i = 0; i < line_count; i++) {
         fputs(lines[i], fp);
         if (i < line_count - 1 || lines[i][strlen(lines[i]) - 1] != '\n') {
             fputc('\n', fp);
         }
     }
-
     fclose(fp);
-
     clear();
     mvprintw(0, 0, "File saved successfully: %s", file_name);
     mvprintw(2, 0, "Press any key to continue...");

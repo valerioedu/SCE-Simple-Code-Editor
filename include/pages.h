@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../File/editorfile.h"
-#include "../Library/library.h"
+#include "editorfile.h"
+#include "library.h"
 
 void display_help() {
     int row, col;
@@ -32,8 +32,8 @@ void display_info() {
     mvprintw(row - 2, start, "press:   F1\t\t for instructions");
     mvprintw(row -1, start, "press:   F2\t\t to display this page");
     mvprintw(row, start, "press:   F3\t\t for the file explorer");
-    mvprintw(row + 1, start, "press:   esc\t\t to exit");
-    mvprintw(row + 2, start, "press:   F4\t\t to save new file");
+    mvprintw(row + 2, start, "press:   esc\t\t to exit");
+    mvprintw(row + 1, start, "press:   F4\t\t to save new file");
     mvprintw(row + 4, col - strlen("Press any key to continue...") / 2, "Press any key to continue...");
     refresh();
     char c = getch();

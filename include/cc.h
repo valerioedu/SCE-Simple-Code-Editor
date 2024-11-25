@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../Library/library.h"
-#include "../Macros/macros.h"
-#include "../Pages/pages.h"
+#include "library.h"
+#include "macros.h"
+#include "pages.h"
 
 bool check_parentheses(char text) {
     if (text == '(') {

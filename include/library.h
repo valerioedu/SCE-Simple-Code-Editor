@@ -10,13 +10,13 @@
 #define MAX_COLS 128
 
 char lines[MAX_LINES][MAX_COLS];
-int line_count = 1;  // Start with one line
+int line_count = 1;
 int current_line = 0;
 int current_col = 0;
 
 #define ESCAPE 27
 
-int start_line = 0;  // Make start_line global
+int start_line = 0;
 
 char copy[128*128];
 
@@ -43,19 +43,16 @@ void transcribe_to_text() {
     for (int i = 0; i < line_count; i++) {
         int line_length = strlen(lines[i]);
         if (text_index + line_length + 1 >= MAX_LINES * MAX_COLS) {
-            // If we're about to exceed the text array size, break the loop
             break;
         }
         strcpy(&text[text_index], lines[i]);
         text_index += line_length;
         
-        // Add a newline character after each line, except for the last one
         if (i < line_count - 1) {
             text[text_index] = '\n';
             text_index++;
         }
     }
-    // Ensure the text is null-terminated
     text[text_index] = '\0';
 }
 
